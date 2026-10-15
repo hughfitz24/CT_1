@@ -1,0 +1,686 @@
+\documentclass[12pt,a4paper]{article}
+
+% ============================================
+% CORE PACKAGES
+% ============================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Typography
+\usepackage{libertinus}
+
+% ============================================
+% GRAPHICS AND FIGURES
+% ============================================
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\captionsetup{
+    font=small,
+    labelfont=bf,
+    skip=6pt
+}
+
+% ============================================
+% MATHEMATICS
+% ============================================
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+
+% ============================================
+% TABLES
+% ============================================
+\usepackage{
+    tabularx,
+    array,
+    booktabs,
+    makecell,
+    multirow
+}
+
+% ============================================
+% PAGE LAYOUT
+% ============================================
+\usepackage[
+    a4paper,
+    top=1in,
+    bottom=1in,
+    left=1in,
+    right=1in,
+    headheight=15pt,
+    footskip=0.30in
+]{geometry}
+
+\usepackage{setspace}
+\setstretch{1.2}
+
+\usepackage{parskip}
+\usepackage{enumitem}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+
+% ============================================
+% HEADERS AND FOOTERS
+% ============================================
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{\small\textsc{EEEN40010 -- Control Theory}}
+\fancyhead[R]{\small Assignment 1}
+
+\fancyfoot[R]{\thepage}
+\fancypagestyle{declaration}{\fancyfoot[R]{}}
+
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ============================================
+% SECTION FORMATTING
+% ============================================
+\usepackage{titlesec}
+
+\titleformat{\section}
+    {\Large\bfseries}
+    {\thesection}
+    {0.8em}
+    {}
+    [\vspace{-0.35em}\titlerule]
+
+\titleformat{\subsection}
+    {\large\bfseries}
+    {\thesubsection}
+    {0.8em}
+    {}
+
+\titleformat{\subsubsection}
+    {\normalsize\bfseries}
+    {\thesubsubsection}
+    {0.8em}
+    {}
+
+\titlespacing*{\section}
+    {0pt}
+    {1.8em}
+    {0.8em}
+
+\titlespacing*{\subsection}
+    {0pt}
+    {1.4em}
+    {0.5em}
+
+\titlespacing*{\subsubsection}
+    {0pt}
+    {1.1em}
+    {0.4em}
+
+% ============================================
+% HYPERLINKS
+% ============================================
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=black,
+    bookmarks=true,
+    pdfauthor={Hugh Fitzpatrick},
+    pdftitle={EEEN40010 Assignment 1}
+]{hyperref}
+
+% ============================================
+% DIAGRAMS
+% ============================================
+\usepackage{tikz}
+\usepackage{circuitikz}
+
+% ============================================
+% CODE LISTINGS
+% ============================================
+\usepackage{listings}
+\usepackage{xcolor}
+
+% MATLAB code colours
+\definecolor{codegray}{gray}{0.45}
+\definecolor{codebg}{RGB}{248,248,248}
+\definecolor{codekeyword}{RGB}{0,70,140}
+\definecolor{codestring}{RGB}{160,60,0}
+\definecolor{codecomment}{RGB}{0,120,70}
+
+\lstdefinestyle{matlabstyle}{
+    language=Matlab,
+    backgroundcolor=\color{codebg},
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{codekeyword}\bfseries,
+    commentstyle=\color{codecomment},
+    stringstyle=\color{codestring},
+    numbers=left,
+    numberstyle=\tiny\color{codegray},
+    stepnumber=1,
+    numbersep=10pt,
+    frame=single,
+    framerule=0.4pt,
+    rulecolor=\color{black!20},
+    breaklines=true,
+    breakatwhitespace=false,
+    showstringspaces=false,
+    keepspaces=true,
+    tabsize=4,
+    columns=fullflexible,
+    aboveskip=0.8em,
+    belowskip=0.8em,
+    captionpos=b
+}
+
+% MATLAB / terminal output colours
+\definecolor{outputbg}{RGB}{247,247,247}
+\definecolor{outputborder}{RGB}{205,205,205}
+\definecolor{outputtext}{RGB}{35,35,35}
+
+\lstdefinestyle{outputstyle}{
+    language={},
+    backgroundcolor=\color{outputbg},
+    basicstyle=\ttfamily\small\color{outputtext},
+    numbers=none,
+    frame=single,
+    framerule=0.4pt,
+    rulecolor=\color{outputborder},
+    breaklines=true,
+    breakatwhitespace=false,
+    showstringspaces=false,
+    keepspaces=true,
+    tabsize=4,
+    columns=fullflexible,
+    xleftmargin=0pt,
+    xrightmargin=0pt,
+    aboveskip=0.8em,
+    belowskip=0.8em,
+    captionpos=b
+}
+
+\lstset{style=matlabstyle}
+% ============================================
+% DOCUMENT BEGIN
+% ============================================
+\begin{document}
+
+% ============================================
+% TITLE PAGE
+% ============================================
+\begin{titlepage}
+    \centering
+    \vspace*{1.5cm}
+
+    % UCD Crest
+    \includegraphics[height=7.5cm]{images/UCD_Crest.png}\\[1.2cm]
+
+    % Institution and course info
+    {\Large\textsc{University College Dublin}}\\[0.3cm]
+    {\large\textsc{School of Electrical \& Electronic Engineering}}\\[0.8cm]
+    {\large\textsc{EEEN40010 -- Control Theory}}\\[2cm]
+
+    % Assignment title
+    {\Huge\bfseries Assignment 1}\\[0.4cm]
+    {\Large Control Design Method of Dominant Pole Placement
+      via Root Locus}\\[2cm]
+
+    % Author info
+    {\Large\textbf{Hugh Fitzpatrick}}\\[0.2cm]
+    {\large Student Number: 22341351}\\[0.2cm]
+
+    \vfill
+\end{titlepage}
+\section*{Declaration of Authorship}
+\thispagestyle{declaration}
+\vspace{0.3cm}
+{\small
+I declare that all material in this report is my own work. Any contributions, ideas, or text from other sources have been clearly acknowledged. I confirm that no unacknowledged sources or unauthorised assistance were used in completing this report.
+}
+
+\vspace{1cm}
+
+\noindent\textbf{Signed:} \hrulefill
+
+\vspace{0.8cm}
+
+\noindent\textbf{Date:} \text{\today}
+\newpage
+% ============================================
+% FRONT MATTER
+% ============================================
+\setcounter{page}{1}
+\thispagestyle{fancy}
+
+% Optional: Table of Contents
+% \tableofcontents
+
+% ============================================
+% MAIN CONTENT
+% ============================================
+\section{Problem 1}
+After substitution of the personal digits, the equations of motion for the presented problem are denoted by: 
+\begin{align*}
+    \dot{\tilde{\alpha}} &= -1.3 \tilde{\alpha} -5 \tilde{q} + 0.153 \tilde{\delta_e} + 0.153d \\
+    \dot{\tilde{q}} &= 0.35 \tilde{\alpha} -1.31\tilde{q} +0.003 \dot{\tilde{\alpha}} + 1.351\tilde{\delta_e} + 1.351d \\
+    \dot{\tilde{\theta}} &= \tilde{q}
+\end{align*}
+The model of this system, referred to herein as the "plant", is given as a linear model around some operating point. It is assumed that this model is time-invariant. The elevator setting $\delta_e$ is chosen as the plant input, with pitch-angle deviation $\tilde{\theta}$ from the operating point being chosen as the controlled output.
+
+The analysis of these linear constant-coefficient ODEs can then be simplified using the Laplace transform. The equivalent s-domain equations are given by:
+\begin{align}
+    s\tilde{A} &= -1.3\tilde{A} - 5\tilde{Q} + 0.153(\tilde{\Delta}_e + D) \label{eq:atild}\\
+    s\tilde{Q} &= (0.35+ 0.003s)(\tilde{A}) -1.31\tilde{Q} + 1.351\tilde{\Delta}_e + 1.351D \label{eq:qtild} \\
+    \tilde{\Theta} &= \frac{\tilde{Q}}{s} \label{eq:thetatild}
+ \end{align}
+The plant is first analysed without the affect of disturbance, i.e. $D$ is set to zero. This yields a simplified~\eqref{eq:atild}:
+$$
+    \tilde{A} = \frac{-5 \tilde{Q} + 0.153 \tilde{\Delta}_e}{s + 1.3}
+$$
+Substituting this and~\eqref{eq:thetatild} into~\eqref{eq:qtild}:
+ $$
+    s(s\tilde{\Theta}) = (0.35 + 0.003s) \bigg(\frac{-5(s\tilde{\Theta}) + 0.153\tilde{\Delta}_e}{s + 1.3} \bigg) - 1.31(s\tilde{\Theta}) + 1.351 \tilde{\Delta}_e
+ $$
+ This can be re-arranged to yield an expression for $G_p(s)$, the transfer function of the plant:
+ \begin{align}
+     G_p(s) = \frac{\tilde{\Theta}}{\tilde{\Delta}_e} &= \frac{0.153(0.003s + 0.35) + 1.351(s + 1.3)}{s\big((s + 1.31)(s + 1.3) + 5(0.003s + 0.35) \big)} \notag \\
+      &\approx \frac{1.351s+1.810}{s\left(s^2+2.625s+3.453\right)} \label{eq:g_p(s)}
+\end{align}
+\subsection{Plant Poles and Zeroes}
+The plant, modelled as $G_p(s)$, can be shown to have one real, negative zero $z_1$: 
+$$
+    1.351z_1 +1.810 = 0 \implies z_1 = -\frac{1.810}{1.351} \approx -1.340 
+$$
+Similarly, the poles of the transfer function can be found by finding the roots of the denominator polynomial $s\left(s^2+2.625s+3.453\right)$. It is clear that there is a pole at $s=0$ in this polynomial. The remaining poles can be found by finding the roots of the quadratic in $s$:
+\begin{align*}
+&s^2+2.625s+3.453 = 0\\
+\implies &p_1,p_2 = \frac{- 2.625 \pm \sqrt{(2.625)^2 -4(3.453)}}{2} \\
+&p_1, p_2 \approx-1.31 \pm j1.32
+\end{align*}
+These poles and zeros can be confirmed numerically using MATLAB:
+\begin{lstlisting}[style=outputstyle]
+zeroes =
+
+   -1.3392
+
+
+poles = 
+      0.0000 + 0.0000i
+     -1.3125 + 1.3154i
+     -1.3125 - 1.3154i
+
+\end{lstlisting}
+The one real, negative zero is therefore determined to be to the left of the complex conjugate pair of poles in the complex plane, as it's real component is more negative. 
+
+This can also be confirmed visually in Matlab:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/prob1_poleszeros.png}
+    \caption{Poles and Zeroes of the Plant described by~\eqref{eq:g_p(s)}}
+\end{figure}
+The time constant of the real, negative zero $z_1$ is given by $\tau_{z_1} = 1/1.34 = 0.746$s.
+\subsection{Control Design Specification}
+The specification for the control design are detailed as:
+\begin{enumerate}[label=\roman*.]
+    \item 
+    The resulting closed-loop system is stable. This can be verified
+    (not proven) by showing that the real components of all the
+    closed-loop system poles are negative.
+    \label{spec:stability}
+
+    \item 
+    There is zero steady-state error to a step input. This is realised
+    by ensuring that the DC gain of the closed-loop system should equal 1.
+    \label{spec:sse}
+
+    \item 
+    The 2\% settling time of the system does not exceed $1.492$ s,
+    and is not less than $0.249$ s.
+    \label{spec:settling}
+
+    \item 
+    The PO\% does not exceed 80\% of the PO\% of a canonical second-order
+    system whose poles equal
+    $s_i, s_j = -1.31 \pm j1.32$, or does not exceed 30\%, whichever of
+    these constraints is larger.
+    \label{spec:overshoot}
+\end{enumerate}
+The second order canonical system described in this constraint is modelled as having damping ratio $\zeta$ described by: 
+\begin{align*}
+    &\frac{1.32}{1.31} = \frac{\sqrt{1 - \zeta^2}}{\zeta} \\
+    \implies &\zeta \approx \sqrt{\frac{1}{2.02}} = 0.703
+\end{align*}
+The formula for percentage overshoot of a second order canonical system can then be applied to find the percentage overshoot target for the control design in question:
+$$
+    \text{PO\%} = 0.8\bigg(100 \exp \big(-\frac{0.703 \pi}{\sqrt{(1 - 0.703^2)}} \big) \bigg) = 3.58\%
+$$
+The constraint of percentage overshoot not exceeding 30\% will be used for this control design.
+\subsection{Topology Discovery}
+The control system is implemented using a unity negative-feedback configuration. The reference input \(R(s)\) represents the desired value for the pitch-angle deviation, while \(\tilde{\Theta}(s)\) represents the actual pitch-angle deviation. The controller \(G_c(s)\) operates on the error \(E(s)=R(s)-\tilde{\Theta}(s)\), generating the elevator input according to \(\tilde{\Delta}_e(s)=G_c(s)E(s)\). The resulting closed-loop reference-to-output transfer function, neglecting disturbances, is therefore
+
+$$
+T(s)=\frac{\tilde{\Theta}(s)}{R(s)}
+=\frac{G_c(s)G_p(s)}{1+G_c(s)G_p(s)}.
+$$
+
+Specification~\ref{spec:sse} requires that the open-loop system should have a pole present at $s=0$. This pole is provided by the plant, so the specification is met without the insertion of an I-term at the controller.
+
+Specification~\ref{spec:settling} implies that the dominant poles of the closed loop transfer should be placed to the left of $\approx 4/1.492s$, and to the right of $\approx 4/0.249s$ i.e. $-16.06\le \Re(s) \le  -2.68$. 
+
+The overshoot constraint will be met by the closed loop system having a dominant real pole, or the closed loop system being dominated by a pair of conjugate poles with a sufficiently high damping ratio.
+
+As the plant provides a pole at zero, providing a DC gain of 1, there is no need to insert an I-term to the controller. As derivative components can be difficult to realise, the topology of a P controller should first be investigated.
+
+The root loci of the closed loop system with a P controller are found to have two asymptotes, approaching at $\pi/2$ and $3\pi/2$. These asymptotes approach a value of $\sigma = \frac{0 + 2(-1.31) - (-1.34)}{2} \approx -0.64$. The root loci can then be sketched:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{images/prob1_pcontrol_rootlocus.png}
+    \caption{Root Loci of Control Design with P-Controller}
+    \label{fig:prob1_pcontrol_rootlocus}
+\end{figure}
+
+From these, it is evident that a P controller will not be sufficient. No value of K will place a closed loop pole on any of the sketched loci that will meet the timing constraints of the control system. The three root loci are not sufficiently negative to meet the settling time constraint. 
+
+A practical PD controller is the next logical topology to investigate. The derivative action introduces a controller zero at $s=-z$, allowing the root locus to be reshaped to achieve the desired closed-loop pole locations. An additional pole at $s=-p$ is introduced through a first-order low-pass filter, limiting the controller's high-frequency gain and ensuring that it remains realisable. $p$ and $z$ are chosen such that a pole with a sufficiently negative real component to meet the timing restraints can be found, while also ensuring the poles that lie on the asymptotic loci have a sufficiently high damping ratio to meet the overshoot constraint.
+
+The closed loop system will have four poles; one on the root locus between $0$ and $-1.34$, one on the root locus between $-z$ and $-p$, and a complex conjugate pair of poles on the asymptotic loci. The pole on this rightmost locus will likely dominate the response of the closed loop system as it will be closest to the imaginary axis; this is undesirable as this pole is not negative enough to meet the timing constraints of the control design. The design goal here is to:
+\begin{itemize}
+    \item Ensure that this "slow" pole on the rightmost root locus is not able to dominate the response, by placing it sufficiently close to the zero at $-1.34$ while keeping a reasonable gain value.
+    \item Ensure that the real pole on the root locus between $-z$ and $-p$ is sufficiently negative to meet the settling time constraint.
+    \item Ensure that the conjugate poles are sufficiently negative to not disturb the dominance of the real pole between $-z$ and $-p$, and have a damping ratio sufficient to meet the overshoot constraints. 
+\end{itemize}
+The 30\% overshoot limit gives relative flexibility in the damping ratio constraint. If the conjugate poles have a sufficiently large magnitude, the transient response will initially be dominated by these poles, which can be modelled as an approximate second-order system. Applying the approximate second-order model for the damping ratio of these poles:
+$$
+\exp \big(-\frac{\pi \zeta}{\sqrt{1 - \zeta^2}} \big ) \le 0.3 \implies \zeta \ge 0.36 
+$$
+$\zeta=0.36$ gives a very approximate guideline for the damping ratio that will give sufficiently low overshoot; the system in question here does not follow this second order model, so a damping ratio of this value will likely not give a sufficiently low overshoot, but it acts as a suitable design guide. 
+
+If the real part of these conjugate poles are sufficiently negative relative to the real pole on the root locus between $z$ and $p$, their transient response will decay at a much faster rate, leaving the response dominated by that real pole. 
+
+The zero of the controller should be placed sufficiently negative, such that the pole on this locus will be negative enough to meet the timing constraint. The zero should also be sufficiently far enough away from the resulting zero, so that it does not damp the dominance of that pole. A value of $z=2.5$ is chosen initially as a rough estimate of a suitable value.
+
+The PD controller design can be approximated by sketching some topologies with $z=2.5$ and varying $p$:
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.45\textheight]{images/prob1_pdcontrol_p8.png}
+    \caption{Root Locus for Controller Pole at $p=8$, two loci approaching $\sigma = -3.39$}
+    \label{fig:prob1_pdcontrol_p8}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=0.45\textheight]{images/prob1_pdcontrol_p10.png}
+    \caption{Root Locus for Controller Pole at $p=10$, two loci approaching $\sigma = -4.39$}
+    \label{fig:prob1_pdcontrol_p10}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textheight]{images/prob1_pdcontrol_p15.png}
+    \caption{Root Locus for Controller Pole at $p=13$, two loci approaching $\sigma = -5.89$}
+    \label{fig:prob1_pdcontrol_p15}
+\end{figure}
+$p=10$ appears to be a suitable approximate value; poles less negative than $s=-10$ appear to require significantly large gain values in order to make the complex conjugate poles sufficiently negative. These poles will also have lower damping ratios, and may struggle to reach the overshoot requirement. Poles more negative than $s=-10$ appear to create loci that will be suitable for pole placement that will meet the specification, but these will require larger gain values to realise poles that can be more easily replicated with smaller controller poles. These more negative poles will also require a much smaller $T_d$ for the practical PD controller implementation, which is more difficult to realise.
+
+The sketching process shows that a PD controller with zeros and poles at $z=2.5$ and $p=10$ appears to be a suitable candidate for this control problem. An acceptable approximation of the placement of the real closed loop pole can be made around $s\approx -3$, to provide the required component for settling time. Assuming that the rightmost pole is sufficiently close to the plant zero such that it's influence on the transient response is negligible, and assuming that the complex conjugate poles are sufficiently more negative than $-3$, the 2\% settling time of the system can be roughly approximated using a first order model, $T_s \approx\frac{4}{3s^{-1}}\approx1.33s$. This satisfies the settling time requirement.
+
+These can be further investigated via numerical analysis in Matlab, making use of the \texttt{rlocfind} function. The \texttt{rlocfind} command is used to plot the root loci, and a pole with a sufficiently negative real component of $p \approx -3$ is placed on the real axis. 
+
+The resulting complex conjugate pair of poles must be suitably damped, and the resulting rightmost pole must be sufficiently close to the plant zero to allow the dominance of the more negative pole. 
+
+The \texttt{rlocfind} defines the closed loop poles of the system as below:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/prob1_pdcontrol_matlab_pole3.png}
+    \caption{Closed loop poles for system, found using \texttt{rlocfind}}
+    \label{fig:prob1_pdcontrol_matlab_pole3}
+\end{figure}
+
+A gain value of $K = 84.019$ is required to realise this closed loop system, i.e. the basic controller form is of the following:
+$$
+G_c(s) = 84.019\frac{s + 2.5}{s+10} = \frac{8.4019s+21.00475}{0.1s+1}
+$$
+
+The closed loop system has poles at the following locations:
+\begin{align*}
+    p_{cl, 1} &= -1.21 + j0 \\
+    p_{cl, 2} &= -3 + j0 \\
+    p_{cl, 3} &= -4.2 + j9.3 \\ 
+    p_{cl, 4} &= -4.2 - j9.3 \\ 
+\end{align*}
+The rightmost pole $p_{cl, 1}$ lies close to the plant zero at $-1.34$, and as such will likely struggle to dominate the response of the system. The response will be dominated by the remaining poles; as the real component of $p_{cl, 2}$ is less negative than those of $p_{cl, 3}, p_{cl, 4}$, this pole will dominate the transient system response, and is sufficiently negative to meet the timing constraint as estimated by the first order model. As the dominance of $p_{cl, 2}$ is being established, the complex conjugate pair will have a non-neglible contribution, so overshoot will occur. Matlab provides a damping ratio for these poles of $\zeta = 0.412$, which is greater than the minimum $\zeta_{min} = 0.36$ that the approximate second-order model estimates.
+
+Thus, the derived PD controller can be defined in standard format:
+\begin{equation}
+    G_c(s) \approx \underbrace{21}_{k_p} + \underbrace{6.3}_{k_d}\frac{s}{\underbrace{0.1}_{T_d}s + 1}
+    \label{eq:prob1_pdcontrol}
+\end{equation}
+
+The P and D gain values $k_p$ and $k_d$ are not exceedingly large or small, meaning they could be more easily realised in electronic components if this controller were to be implemented. The time constant $T_d$ is also not excessively small, meaning it would be more easily realised in an implementation of this controller. 
+
+The adherence of the system to the specification can be tested using Matlab. The closed loop system of~\eqref{eq:g_p(s)} controlled by the PD controller described by~\eqref{eq:prob1_pdcontrol} is tested with a step input, using the \texttt{step} and \texttt{stepinfo} commands in Matlab (see Listing~\ref{lst:prob1_stepinfo}).
+
+The step response of the closed loop system can be visualised using the \texttt{step} command:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/prob1_pdcontrol_matlab_step.png}
+    \caption{Closed loop poles for system, found using \texttt{rlocfind}}
+    \label{fig:prob1_pdcontrol_matlab_step}
+\end{figure}
+
+The adherence to the specification can also be confirmed using the \texttt{stepinfo}, \texttt{isstable} and \texttt{dcgain} commands:
+\begin{lstlisting}[style=outputstyle]
+--- Specification checks ---
+Stable: True
+DC gain: 1.0000
+Settling time: 0.8725 s
+Overshoot: 28.50 %
+\end{lstlisting}
+
+These results indicate that this closed loop system has achieved the design specification in the ideal simulation environment. 
+
+\subsection{Disturbance Rejection}
+To characterise the disturbance rejection performance of the closed loop system derived above, the transfer function for disturbance must be defined.
+
+As the coefficients of the elevator input \(\tilde{\delta}_e\) and disturbance \(d\) are identical in both~\eqref{eq:atild} and~\eqref{eq:qtild}, these inputs have an identical effect on the plant. By linearity, the previously derived plant transfer function~\eqref{eq:g_p(s)} can therefore be used to describe the response to their combined input:
+
+\[
+\tilde{\Theta}(s)=G_p(s)\left[\tilde{\Delta}_e(s)+D(s)\right].
+\]
+
+The closed loop system can then be derived. As stated earlier, the error in this closed loop system is given by:
+$$
+E(s) = R(s) - \tilde{\Theta}(s)
+$$
+Assuming the reference signal $R(s)$ is set to 0, the error is simplified to $E(s) = - \tilde{\Theta}(s)$. The corresponding elevator pitch setting $\tilde{\Delta_e}(s)$ is then found as:
+$$\tilde{\Delta_e}(s) = -G_c(s)\tilde{\Theta}(s)$$
+
+This yields a model for the closed-loop system's reaction to a disturbance input:
+\begin{align*}
+\tilde{\Theta}(s) &=G_p(s)\left[\tilde{\Delta}_e(s)+D(s)\right] \\
+&= G_p(s)\left[-G_c(s)\tilde{\Theta}(s) + D(s)\right] \\
+\tilde{\Theta}(s) \left[1 + G_C(s)G_p(s) \right] &= G_p(s) D(s)
+\end{align*}
+The closed loop transfer function can then be defined:
+\begin{equation}
+\frac{\tilde{\Theta}(s)}{D(s)}
+=\frac{G_p(s)}{1+G_c(s)G_p(s)}
+\label{eq:prob1_disturbance}
+\end{equation}  
+The response of this closed loop system to an impulse response can be completed using Matlab's \texttt{impulse} command. This passes a unit-area impulse as input to a system modelled by a transfer function. 
+
+The disturbance rejection can be tested by passing a unit area impulse signal $d(t) = \delta(t)$, where $\delta(t)$ is the Dirac delta function. This will yield an impulse response \textit{per unit impulse area}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/prob1_pdcontrol_matlab_impulse_cl.png}
+    \caption{Impulse response of closed loop system described by~\eqref{eq:prob1_disturbance}}
+\end{figure}
+
+The impulse response of the closed-loop system indicates satisfactory disturbance rejection. The maximum absolute pitch-angle deviation resulting from a unit-area impulsive disturbance is \(\max_{t\geq 0}|\tilde{\theta}(t)| = 0.13112\) angle units. The response is shown to fall to less than $2\%$ of this maximum deviation within 1.523 seconds. 
+
+This disturbance rejection can also also shown to be asymptotically stable using the $\texttt{isstable}$ command in Matlab. This is the expected behaviour of the system, as governed by the Final Value Theorem. To show this, the following re-arrangement can be made:
+
+\begin{align*}
+    G_d(s) &= \frac{\tilde{\Theta}(s)}{\underbrace{D(s)}_{1}} = \frac{G(s)}{1+G(s)G_C(s)} \\
+    \implies \tilde{\Theta}(s) &= G_d(s)
+\end{align*}
+
+Applying the Final Value Theorem:
+\[
+    \lim_{t\to\infty}\tilde{\theta}(t) = \lim_{s\to0}sG_d(s)
+\]
+As $G_d(s)$ has poles with poles strictly less than 0, the above limit will tend to 0. 
+
+This demonstrates that the closed-loop system rejects the impulsive disturbance without a persistent deviation from the equilibrium operating point.
+
+\subsection{Control Design Robustness}
+To measure the robustness of the control design to plant modelling errors, a Matlab script can be used to vary the $a_{11}$ and $a_{21}$ parameters, introducing an error of up to 10\% on both coefficients. This script sweeps across 21 equally spaced errors between $\pm10\%$ for both coefficients, totalling 441 total simulations of step response (see Listing~\ref{lst:prob1_err}). 
+
+The two specifications of concern for an incorrectly modelled plant are~\ref{spec:settling} and~\ref{spec:overshoot}. Across all 441 simulations, the system stays within the bounds of settling time and overshoot defined by the specifications:
+\begin{lstlisting}[style=outputstyle]
+    Settling time:  0.860 to 1.411 s
+    Overshoot:      28.27 to 28.75 % 
+\end{lstlisting}
+The system can be estimated as robust to errors up to $\pm10\%$ in the estimation of the two analysed coefficients.
+
+
+\subsection{Stability Robustness}
+A similar analysis can be performed for the robustness of the stability of this closed loop system. A similar Matlab script can be used to introduce an error of up to $\pm10\%$ on the two co-efficients (see Listing~\ref{lst:prob1_staberr}). The stability of the system can be quantified by looking at the corresponding system poles, and verifying that these poles do not cross the imaginary axis.
+
+Stability is observed across all 441 simulated parameter combinations. The closed-loop pole with the largest real component, corresponding to the configuration closest to instability, occurred when \(a_{11}\) was 10\% below its nominal value and \(a_{21}\) was 10\% above its nominal value. The rightmost closed-loop pole had a real component of \(-1.0955\), remaining strictly within the left half of the complex plane. These results provide strong numerical evidence that the designed controller is robustly stable under the specified \(\pm 10\%\) parameter uncertainties.
+
+\section{Problem 2}
+Upon substitution of the personalised digits, the following ODE describing a SISO plant can be defined: 
+\begin{equation}
+    f(t) = \ddot{x} - \left( 1.52 - 0.507 x^2 \right) \dot{x} + 1.5x + 0.04x^3 + 0.07x^5
+    \label{eq:prob2_ode}
+\end{equation}
+
+The special condition of setting this equation to equal 0 yields an ODE that can be analysed numerically in Matlab. This can be analysed using the \texttt{ode45} method to solve the ODE using the RK45 method.~\cite{mathworks:ode45}
+
+A set of initial conditions must first be defined, $x = 1, \dot{x} = 0$ is a suitable arbitrary choice to view the convergence to a limit cycle. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{images/prob2_odelimitcycle_x1.png}
+    \caption{Time-domain response of system described by~\eqref{eq:prob2_ode} $= 0$, $x=1, \dot{x}=0$}
+\end{figure}
+With this set of initial conditions, the equation appears to converge towards an oscillation of amplitude $A \approx 3.29$. To investigate other initial conditions and their oscillatory behaviour, a range of initial conditions can be defined: 
+\[
+\begin{bmatrix}
+x(0) & \dot{x}(0)
+\end{bmatrix}
+\in
+\left\{
+    \underbrace{
+        \begin{bmatrix} 0.5 & 0 \end{bmatrix},
+        \begin{bmatrix} 3.29 & 0 \end{bmatrix}
+        \begin{bmatrix} 5.0 & 0 \end{bmatrix},
+    }_{\text{Varying }x(0)}
+    \underbrace{
+        \begin{bmatrix} 0 & 1 \end{bmatrix},
+        \begin{bmatrix} 0 & 8 \end{bmatrix},
+    }_{\text{Varying }\dot{x}(0)}
+\right\}.
+\]
+
+These initial conditions seek to observe how the convergence of this special condition to a limit cycle changes, depending on how $x$ and $\dot{x}$ are varied. 
+
+These initial conditions are evaluated using \texttt{ode45} and plotted:
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.75\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/prob2_odelimitcycle_varx.png}
+        \caption{Varying initial displacement $x(0)$}
+        \label{fig:limitcycle_x}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.75\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/prob2_odelimitcycle_vardotx.png}
+        \caption{Varying initial velocity $\dot{x}(0)$}
+        \label{fig:limitcycle_xdot}
+    \end{subfigure}
+    \caption{Time-domain responses of the nonlinear oscillator for different initial conditions.}
+    \label{fig:limitcycle}
+\end{figure}
+As can be observed in these plots, the non-linear ODE appears to converge to a stable oscillation, across a range of initial conditions. The initial amplitude of the limit cycle appears to be related to $x$, and the speed of convergence to a limit cycle appears to be governed by $\dot{x}$.
+
+This oscillation can be quantified by finding it's peak values and frequency. Across the different initial conditions, a consistent oscillation is found, of amplitude 3.292 and frequency 0.41691 Hz. This yields a period of $1/0.41691 = 2.3986s$. 
+
+\newpage
+
+\begin{thebibliography}{1}
+    \bibitem{mathworks:ode45}
+    The MathWorks, Inc., ``ode45: Solve nonstiff differential equations---medium order method,''
+    \textit{MATLAB Documentation}. Accessed: Oct. 13, 2026. [Online]. Available:
+    \url{https://uk.mathworks.com/help/matlab/ref/ode45.html}
+\end{thebibliography}
+
+\newpage
+\appendix
+\section{Matlab Code Listings}
+
+\begin{lstlisting}[
+    caption={Matlab code for determining the step response of the closed loop system defined in Problem 1.},
+    label={lst:prob1_stepinfo},
+]
+%% PD Controller with zero at 2.5 and pole at 10
+zc = 2.5;
+pc = 10;
+
+G_C = tf([1 zc], [1 pc]);
+
+G_CL = G_C * G;
+
+%% Build closed-loop system
+
+T = feedback(K * G_CL, 1);
+disp('Step response:')
+disp(stepinfo(T))
+
+figure;
+step(T);
+grid on;
+
+title(sprintf( ...
+    'Step Response: z=%.1f, p=%.1f, K=%.2f', ...
+    zc, pc, K));
+
+
+%% Specification checks
+
+fprintf('\n--- Specification checks ---\n');
+
+fprintf('Stable: %d\n', isstable(T));
+fprintf('DC gain: %.4f\n', dcgain(T));
+
+info = stepinfo(T);
+
+fprintf('Settling time: %.4f s\n', info.SettlingTime);
+fprintf('Overshoot: %.2f %%\n', info.Overshoot);
+
+fprintf('\nClosed-loop poles:\n');
+disp(pole(T));
+
+fprintf('Closed-loop zeros:\n');
+disp(zero(T));
+\end{lstlisting}
+
+\begin{lstlisting}[
+    caption={Matlab code for simulating error in estimation of $a_{11}$ and $a_{21}$ in the plant equations.},
+    label={lst:prob1_err},
+]
+\end{lstlisting}
+
+\begin{lstlisting}[
+    caption={Matlab code for verifying stability in the case of error in estimation of $a_{11}$ and $a_{21}$ in the plant equations.},
+    label={lst:prob1_staberr},
+]
+\end{lstlisting}
+\end{document}
