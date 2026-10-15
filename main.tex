@@ -325,7 +325,7 @@ This can also be confirmed visually in Matlab:
 The time constant of the real, negative zero $z_1$ is given by $\tau_{z_1} = 1/1.34 = 0.746$s.
 \subsection{Control Design Specification}
 The specification for the control design are detailed as:
-\begin{enumerate}[label=\roman*.]
+\begin{enumerate}[label=\roman*., ref=\thesubsection(\roman*)]
     \item 
     The resulting closed-loop system is stable. This can be verified
     (not proven) by showing that the real components of all the
@@ -349,6 +349,13 @@ The specification for the control design are detailed as:
     these constraints is larger.
     \label{spec:overshoot}
 \end{enumerate}
+
+This equated to a unity negative feedback control system, with plant modelled by transfer function $G_p(s)$ and controller modelled by transfer function $G_c(s)$. The equivalent closed loop transfer function will equal:
+\begin{equation}
+G_{cl}(S)=\frac{G_C(s)G_P(s)}{1+G_C(s)G_P(s)}.
+\label{eq:g_cl_general}
+\end{equation}
+
 The second order canonical system described in this constraint is modelled as having damping ratio $\zeta$ described by: 
 \begin{align*}
     &\frac{1.32}{1.31} = \frac{\sqrt{1 - \zeta^2}}{\zeta} \\
@@ -560,6 +567,7 @@ Upon substitution of the personalised digits, the following ODE describing a SIS
     \label{eq:prob2_ode}
 \end{equation}
 
+\subsection{System Oscillatory Behaviour}
 The special condition of setting this equation to equal 0 yields an ODE that can be analysed numerically in Matlab. This can be analysed using the \texttt{ode45} method to solve the ODE using the RK45 method.~\cite{mathworks:ode45}
 
 A set of initial conditions must first be defined, $x = 1, \dot{x} = 0$ is a suitable arbitrary choice to view the convergence to a limit cycle. 
@@ -611,9 +619,104 @@ These initial conditions are evaluated using \texttt{ode45} and plotted:
 \end{figure}
 As can be observed in these plots, the non-linear ODE appears to converge to a stable oscillation, across a range of initial conditions. The initial amplitude of the limit cycle appears to be related to $x$, and the speed of convergence to a limit cycle appears to be governed by $\dot{x}$.
 
-This oscillation can be quantified by finding it's peak values and frequency. Across the different initial conditions, a consistent oscillation is found, of amplitude 3.292 and frequency 0.41691 Hz. This yields a period of $1/0.41691 = 2.3986s$. 
+This oscillation can be quantified by finding it's peak values and frequency. Across the different initial conditions, a consistent oscillation is found, of amplitude 3.292 and frequency 0.417 Hz. This yields a period of $1/0.417 \approx 2.399s$. 
 
-\newpage
+\subsection{Linearisation}
+To linearise the system around the desired operating point of $x = 0, \dot{x} = 0$, a first-order Taylor series can be completed.
+
+
+The derivative $\ddot{x}$ can be expressed as a function of $x, \dot{x},$ \& $f$:
+$$
+    \ddot{x} = g(x,\dot{x},f)=(1.52-0.507x^2)\dot{x}-1.5x-0.04x^3-0.07x^5+f
+$$
+
+The first-order Taylor expansion for this $g(x, \dot{x}, f)$ at the desired operating point is given as: 
+
+\begin{align*}
+g(x,\dot{x},f)\approx {}&
+g(x_0,\dot{x}_0,f_0)\\
+&+\left.\frac{\partial g}{\partial x}\right|_0(x-x_0)\\
+&+\left.\frac{\partial g}{\partial\dot{x}}\right|_0(\dot{x}-\dot{x}_0)\\
+&+\left.\frac{\partial g}{\partial f}\right|_0(f-f_0)
+\end{align*}
+
+The partial derivaties with respect to the three variables can be found, and evaluated at the operating point:
+
+\begin{align*}
+    \left.\frac{\partial g}{\partial x}\right|_{(0,0,0)} &= -1.5 \\
+    \left.\frac{\partial g}{\partial \dot{x}}\right|_{(0,0,0)} &= 1.52 \\
+    \left.\frac{\partial g}{\partial f}\right|_{(0,0,0)} &= 1 \\
+    \implies \ddot{x} &= -1.5x + 1.52\dot{x} + f
+\end{align*}
+
+Thus, the linearised approximation of the function $f(x)$ about the operating point $x = 0, \dot{x} = 0$ is given by:
+
+\begin{equation}
+    f(t) \approx \ddot{x} - 1.52\dot{x} + 1.5{x}
+    \label{eq:prob2_linear}
+\end{equation}
+
+The transfer function of~\eqref{eq:prob2_linear} can be found using the Laplace transform. Assuming zero initial conditions, the transform can be performed:
+$$
+F(s) = s^2X(s) - 1.52sX(s) + 1.5X(s)
+$$
+
+This can be re-arranged to give a transfer function in the s-domain for the linearised system: 
+\begin{equation}
+    G_p(s) = \frac{X(s)}{F(s)} = \frac{1}{s^2 - 1.52s + 1.5}
+    \label{eq:prob2_plant_tf}
+\end{equation}
+
+The stability of this linearised model can be evaluated by finding the poles of the transfer function via Matlab:
+
+\begin{lstlisting}[style=outputstyle]
+>> Gp = tf([1], [1 -1.52 1.5]);
+>> pole(Gp)
+    ans = 2x1 complex
+        0.7600 + 0.9604i
+        0.7600 - 0.9604i
+\end{lstlisting}
+As these poles have positive real components, they will create an oscillatory component in the response of this linearised system that grows unbounded over time. As such, the system can be said to be unstable. 
+
+\subsection{Controller Design Specification}
+The specifications for the control design are detailed as:
+\begin{enumerate}[label=\roman*., ref=\thesubsection(\roman*)]
+    \item 
+    The resulting closed-loop system is stable. This can be verified as previously.
+    \label{spec:stability2}
+    \item 
+    There is zero steady-state error to a step input. This is realised
+    by ensuring that a pole is present in the closed-loop system at $s=0$.
+    \label{spec:sse2}
+    \item 
+    The 2\% settling time of the system does not exceed $0.85\times 2.399s \approx 2.04$ seconds.
+    \label{spec:settling2}
+    \item 
+    The PO\% does not exceed 80\%.
+    \label{spec:overshoot2}
+\end{enumerate}
+
+As previously, these specifications translate to a unity negative-feedback control system, with closed loop transfer function~\eqref{eq:g_cl_general}
+\subsection{Topology Discovery}
+The design of a PID controller can be undertaken to reach these specifications. 
+
+To satisfy Spec~\ref{spec:stability2}, all poles must be in the negative half plane of the real axis, such that their real component is negative. 
+
+Spec~\ref{spec:sse2} requires a pole in the open loop transfer function at $s=0$, to ensure the DC gain of the system equals 1. As there is no pole at the origin in the plant, an $I$ term must be placed in the controller. 
+
+As such, the first topology to be examined will be a PI controller, i.e. a PID controller with zero derivative gain.
+
+\subsubsection{PI Controller Topology}
+
+This controller topology will introduce a gain term, a pole at 0 and one zero. This is equivalent to a controller transfer function $G_c(s) = K_p + \frac{K_i}{s} = \frac{K_ps + K_i}{s}$. 
+
+The feasibility of this topology can be verified via the root locus drawing rules. In this system, there will be three open loop poles and one open loop zero. This will result in $3 - 1 = 2$ asymptotes. They will have centroid $\sigma$ at:
+$$
+\sigma = \frac{(0+0.76+0.76)-(-z)}{3-1}
+=\frac{1.52+z}{2}
+$$
+The asymptote angles are also found as $\theta_1 = \frac{\pi}{2}, \theta_2 = \frac{3\pi}{2}$. For any $z > 0$ i.e. for positive $K_i$ and $K_p$, no value of $z$ can result in the locus centroid being $< 0.76$. As such, the resulting root locus will never cross the imaginary axis, and as such no gain value can be found to result in the real component of the conjugate pairs to be negative. As such, no PI controller configuration can yield a stable closed-loop system.
+
 
 \begin{thebibliography}{1}
     \bibitem{mathworks:ode45}
