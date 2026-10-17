@@ -692,7 +692,7 @@ The specifications for the control design are detailed as:
     The 2\% settling time of the system does not exceed $0.85\times 2.399s \approx 2.04$ seconds.
     \label{spec:settling2}
     \item 
-    The PO\% does not exceed 80\%.
+    The PO\% does not exceed 80\%. This can be estimated with the 2nd order system model to give a minimum damping ratio of $\zeta\geq0.071$.
     \label{spec:overshoot2}
 \end{enumerate}
 
@@ -717,7 +717,146 @@ $$
 $$
 The asymptote angles are also found as $\theta_1 = \frac{\pi}{2}, \theta_2 = \frac{3\pi}{2}$. For any $z > 0$ i.e. for positive $K_i$ and $K_p$, no value of $z$ can result in the locus centroid being $< 0.76$. As such, the resulting root locus will never cross the imaginary axis, and as such no gain value can be found to result in the real component of the conjugate pairs to be negative. As such, no PI controller configuration can yield a stable closed-loop system.
 
+\subsubsection{PID Controller Topology}
+An ideal implementation of this topology will introduce a gain term, a pole at zero, and two zeros:
+$$
+G_{C, PID, Ideal} = \frac{k (s + z_1)(s + z_2)}{s}
+$$
+The practical implementation of a PID controller introduces a small delay constant $T_D$ for numerically stable differentiation; this is chosen as $T_D = 0.1$ in this design as it should be suitably small without being excessively difficult to implement. This yields an additional real pole at $p = -1/0.1 = -10$, giving a controller modelled as:
 
+$$
+G_{C,PID}(s)
+=k_p+\frac{k_i}{s}+\frac{k_ds}{T_ds+1}
+=\frac{K(s+z_1)(s+z_2)}{s(s+10)}
+$$
+
+The root locus drawing rules can again be reviewed. The open loop system will have 4 open loop poles and 2 open loop zeroes, resulting in 2 asymptotes. These asymptotes will have centroid $\sigma$ at:
+
+$$
+\sigma = \frac{(0 - 10 + 0.76 + 0.76)-(-z_1 - z_2)}{3-1}
+=\frac{-8.48 +  z_1 + z_2}{2}
+$$
+The asymptote angles are $\theta_1 = \frac{\pi}{2}, \theta_2 = \frac{3\pi}{2}$.
+
+This equation assists in the sketching of the root locus. The dominant pole, or pair of conjugate poles, must be negative enough to satisfy the timing constraint. This can be estimated using the approximate model for the settling time of a dominant pole or pair of poles as $
+T_s\approx\frac{4}{\operatorname{Re}(p)}\leq2.04
+$, i.e. $\operatorname{Re}(p)\leq-1.96$. 
+
+The root loci can be roughly sketched using the drawing rules for varying $z_1, z_2$, to assist in the selection of these values. 
+
+First, a large $z_1$ and $z_2$ are chosen, to determine if a dominant real pole is a feasible topology. This topology seeks to create the rightmost root locus such that a suitably negative real pole can dominate the response.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/prob2_rootlocussketch_3_4.png}
+    \caption{Root Locus Sketch for PID-controlled system, $z_1 = 3, z_2 = 4, p = 10$}
+\end{figure}
+The sketching of the root locus shows that this is an unsuitable topology. Any value of $K$ will result in a pair of conjugate poles dominating the response, with real part not sufficiently negative to meet the timing requirements. 
+
+As such, the design goal shifts towards a \textit{dominant pair} of poles. For any design utilising $z_1 < 1.96$, the resulting configuration will have a rightmost pole that will fail the timing requirement if it dominates the response; as such, this pole should be placed suitably close to the zero at $z_1$ to prevent it from dominating the response.
+
+$z_1$ and $z_2$ are then made smaller to observe the behaviour of the root locus:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/prob2_rootlocussketch_1.5_2.5.png}
+    \caption{Root Locus Sketch for PID-controlled system, $z_1 = 1.5, z_2 = 2.5, p = 10$}
+\end{figure}
+
+This topology appears to be potentially viable for the specification. A dominant pair of conjugate poles could be placed on the two loci asymptotically approaching $\sigma
+=\frac{-8.48 +  1.5 + 2.5}{2} = -2.24$. This could potentially satisfy the timing requirement, however it may require a very large value for gain, and the pole placement may result in the overshoot requirement not being met. 
+
+These concerns are verified using Matlab, and \texttt{rlocfind}:
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/prob2_rlocfind_1.5_2.5.png}
+        \caption{Root locus and selected closed-loop poles}
+        \label{fig:prob2_rlocfind_1.5_2.5}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/prob2_stepresponse_1.5_2.5.png}
+        \caption{Closed-loop step response}
+        \label{fig:prob2_stepresponse_1.5_2.5}
+    \end{subfigure}
+    \caption{PID-controlled system with $z_1=1.5$, $z_2=2.5$ and $p=10$.}
+    \label{fig:prob2_pid_1.5_2.5}
+\end{figure}
+
+\begin{lstlisting}[style=outputstyle]
+   Selected gain K = 336.6849
+
+    ========== CLOSED-LOOP POLES ==========
+    -2.0049 +17.2292i
+    -2.0049 -17.2292i
+    -3.1290 + 0.0000i
+    -1.3411 + 0.0000i
+
+    ========== SPECIFICATION CHECK ==========
+    Stable:              1
+    Zero step SSE:       1
+    DC gain:             1.000000
+    Settling time:       1.8869 s (limit 2.04 s)
+    Overshoot:           82.64 % (limit 80 %)
+\end{lstlisting}
+As expected, a dominant pair of poles with sufficiently negative real components can be realised, and the timing constraint~\ref{spec:settling2} is resultingly met. These dominant poles do not have a sufficiently high damping ratio, and the overshoot constraint~\ref{spec:overshoot2} is not reached. 
+
+
+This indicates that the magnitude of $z_1$ and $z_2$ should be decreased, such that the centroid of the asymptotic loci is more negative. This will result in the position on these loci where the real component is sufficiently negative having a sufficiently low damping ratio. $z_1=0.5, z_1=1.0$ will have a centroid of $\sigma=\frac{-8.48 +  0.5 + 1.0}{2} = -3.49$. The root loci can be sketched:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/prob2_rootlocussketch_1_0.5.png}
+    \caption{Root Locus Sketch for PID-controlled system, $z_1 = 0.5, z_2 = 1.0, p = 10$}
+\end{figure}
+
+This topology appears promising for achieving the specification, as a dominant pair of conjugate poles can meet the timing requirement and have a sufficiently high damping ratio (as approximated by a second order model of $\zeta_min$). 
+
+This can be tested using \textit{rlocfind}:
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.7\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/prob2_rlocfind_0.5_1.png}
+        \caption{Root locus and selected closed-loop poles}
+        \label{fig:prob2_rlocfind_0.5_1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.7\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/prob2_stepresponse_0.5_1.png}
+        \caption{Closed-loop step response}
+        \label{fig:prob2_stepresponse_0.5_1}
+    \end{subfigure}
+    \caption{PID-controlled system with $z_1=0.5$, $z_2=1.0$ and $p=10$.}
+    \label{fig:prob2_pid_0.5_1}
+\end{figure}
+\begin{lstlisting}[style=outputstyle]
+    Selected gain K = 478.4097
+    ========== CLOSED-LOOP POLES ==========
+    -3.4356 +21.0077i
+    -3.4356 -21.0077i
+    -1.1496 + 0.0000i
+    -0.4592 + 0.0000i
+
+
+    ========== SPECIFICATION CHECK ==========
+    Stable:              1
+    Zero step SSE:       1
+    DC gain:             1.000000
+    Settling time:       1.2443 s (limit 2.04 s)
+    Overshoot:           65.43 % (limit 80 %)
+\end{lstlisting}
+Using \texttt{rlocfind}, the values of $z_1 = 0.5, z_2 = 1$ with a gain value of $K \approx 478.41$ have yielded a controller meeting the design specifications. The transfer function of this controller is given by:
+\begin{equation}
+    G_{cl}(S) = 478.41 \times \frac{(s+0.5)(s+1)}{s(s+10)} = \underbrace{69.37}+\frac{\underbrace{23.92}}{s} +\frac{\underbrace{40.9s}}{0.1s+1}
+    \label{eq:prob2_controller}
+\end{equation}
+\subsection{Fail-Safe Analysis}
+\newpage
 \begin{thebibliography}{1}
     \bibitem{mathworks:ode45}
     The MathWorks, Inc., ``ode45: Solve nonstiff differential equations---medium order method,''
