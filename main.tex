@@ -1,212 +1,120 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[11pt,a4paper]{article}
 
-% ============================================
-% CORE PACKAGES
-% ============================================
-\usepackage[utf8]{inputenc}
+% ---------- Encoding, fonts, microtypography ----------
 \usepackage[T1]{fontenc}
-
-% Typography
-\usepackage{libertinus}
-
-% ============================================
-% GRAPHICS AND FIGURES
-% ============================================
-\usepackage{graphicx}
-\usepackage[export]{adjustbox}
-\usepackage{float}
-\usepackage{caption}
-\usepackage{subcaption}
-
-\captionsetup{
-    font=small,
-    labelfont=bf,
-    skip=6pt
-}
-
-% ============================================
-% MATHEMATICS
-% ============================================
-\usepackage{amsmath}
-\usepackage{amssymb}
-\usepackage{amsthm}
-\usepackage{mathtools}
-
-% ============================================
-% TABLES
-% ============================================
-\usepackage{
-    tabularx,
-    array,
-    booktabs,
-    makecell,
-    multirow
-}
-
-% ============================================
-% PAGE LAYOUT
-% ============================================
-\usepackage[
-    a4paper,
-    top=1in,
-    bottom=1in,
-    left=1in,
-    right=1in,
-    headheight=15pt,
-    footskip=0.30in
-]{geometry}
-
+\usepackage{amsmath,mathtools,amsthm}   % must come BEFORE newtxmath
+\usepackage{newtxtext,newtxmath}        % no amssymb: newtxmath provides it
+\usepackage[protrusion=true,expansion=true]{microtype}
 \usepackage{setspace}
-\setstretch{1.2}
+\setstretch{1.1}
+\setlength{\parindent}{1.1em}
+\setlength{\parskip}{0.2em plus 0.1em minus 0.05em}
+\usepackage{needspace,etoolbox}
+\AtBeginDocument{%
+    \setlength{\abovedisplayskip}{9pt plus 2pt minus 2pt}%
+    \setlength{\belowdisplayskip}{9pt plus 2pt minus 2pt}%
+    \setlength{\abovedisplayshortskip}{4pt plus 2pt}%
+    \setlength{\belowdisplayshortskip}{6pt plus 2pt minus 2pt}%
+    \setlength{\jot}{3.5pt}%
+}
 
-\usepackage{parskip}
-\usepackage{enumitem}
-\setlength{\parindent}{0pt}
-\setlength{\parskip}{0.55em}
+% ---------- Page geometry (about 75-80 characters per line) ----------
+\usepackage[top=25mm,bottom=25mm,left=35mm,right=35mm,footskip=12mm]{geometry}
 
-% ============================================
-% HEADERS AND FOOTERS
-% ============================================
-\usepackage{fancyhdr}
 
-\pagestyle{fancy}
-\fancyhf{}
+% ---------- Graphics and floats ----------
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage[section]{placeins}
+\usepackage[font=small,labelfont=bf,labelsep=period,
+    format=hang,justification=justified,singlelinecheck=false]{caption}
+\usepackage{subcaption}
+\captionsetup[subfigure]{font=footnotesize,labelfont=bf}
+\usepackage{booktabs,array}
+\captionsetup{skip=7pt}
 
-\fancyhead[L]{\small\textsc{EEEN40010 -- Control Theory}}
-\fancyhead[R]{\small Assignment 1}
-
-\fancyfoot[R]{\thepage}
-\fancypagestyle{declaration}{\fancyfoot[R]{}}
-
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\footrulewidth}{0pt}
-
-% ============================================
-% SECTION FORMATTING
-% ============================================
+% ---------- Headings and lists ----------
 \usepackage{titlesec}
+\titleformat{\section}{\fontsize{15}{18}\selectfont\bfseries}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\fontsize{12}{15}\selectfont\bfseries}{\thesubsection}{0.7em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{0.7em}{}
+\titlespacing*{\section}{0pt}{2.8ex plus 0.5ex minus 0.2ex}{1.3ex}
+\titlespacing*{\subsection}{0pt}{2.3ex plus 0.4ex minus 0.2ex}{0.9ex}
+\titlespacing*{\subsubsection}{0pt}{1.8ex plus 0.3ex minus 0.1ex}{0.7ex}
+\pretocmd{\subsection}{\Needspace{5\baselineskip}}{}{}
+\pretocmd{\subsubsection}{\Needspace{4\baselineskip}}{}{}
 
-\titleformat{\section}
-    {\Large\bfseries}
-    {\thesection}
-    {0.8em}
-    {}
-    [\vspace{-0.35em}\titlerule]
+\usepackage{enumitem}
+\setlist[enumerate]{leftmargin=1.8em,labelsep=0.5em,
+    itemsep=3pt,topsep=4pt,parsep=0pt}
+\setlist[itemize]{leftmargin=1.8em,labelsep=0.5em,
+    itemsep=3pt,topsep=4pt,parsep=0pt}
 
-\titleformat{\subsection}
-    {\large\bfseries}
-    {\thesubsection}
-    {0.8em}
-    {}
-
-\titleformat{\subsubsection}
-    {\normalsize\bfseries}
-    {\thesubsubsection}
-    {0.8em}
-    {}
-
-\titlespacing*{\section}
-    {0pt}
-    {1.8em}
-    {0.8em}
-
-\titlespacing*{\subsection}
-    {0pt}
-    {1.4em}
-    {0.5em}
-
-\titlespacing*{\subsubsection}
-    {0pt}
-    {1.1em}
-    {0.4em}
-
-% ============================================
-% HYPERLINKS
-% ============================================
-\usepackage[
-    colorlinks=true,
-    linkcolor=black,
-    citecolor=black,
-    urlcolor=black,
-    bookmarks=true,
-    pdfauthor={Hugh Fitzpatrick},
-    pdftitle={EEEN40010 Assignment 1}
-]{hyperref}
-
-% ============================================
-% DIAGRAMS
-% ============================================
-\usepackage{tikz}
-\usepackage{circuitikz}
-
-% ============================================
-% CODE LISTINGS
-% ============================================
+% ---------- Code and numerical output ----------
 \usepackage{listings}
-\usepackage{xcolor}
-
-% MATLAB code colours
-\definecolor{codegray}{gray}{0.45}
-\definecolor{codebg}{RGB}{248,248,248}
-\definecolor{codekeyword}{RGB}{0,70,140}
-\definecolor{codestring}{RGB}{160,60,0}
-\definecolor{codecomment}{RGB}{0,120,70}
-
 \lstdefinestyle{matlabstyle}{
     language=Matlab,
-    backgroundcolor=\color{codebg},
-    basicstyle=\ttfamily\small,
-    keywordstyle=\color{codekeyword}\bfseries,
-    commentstyle=\color{codecomment},
-    stringstyle=\color{codestring},
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\bfseries,
+    commentstyle=\itshape,
+    stringstyle=\normalfont\ttfamily\footnotesize,
     numbers=left,
-    numberstyle=\tiny\color{codegray},
-    stepnumber=1,
-    numbersep=10pt,
-    frame=single,
-    framerule=0.4pt,
-    rulecolor=\color{black!20},
-    breaklines=true,
-    breakatwhitespace=false,
-    showstringspaces=false,
-    keepspaces=true,
-    tabsize=4,
-    columns=fullflexible,
-    aboveskip=0.8em,
-    belowskip=0.8em,
-    captionpos=b
-}
-
-% MATLAB / terminal output colours
-\definecolor{outputbg}{RGB}{247,247,247}
-\definecolor{outputborder}{RGB}{205,205,205}
-\definecolor{outputtext}{RGB}{35,35,35}
-
-\lstdefinestyle{outputstyle}{
-    language={},
-    backgroundcolor=\color{outputbg},
-    basicstyle=\ttfamily\small\color{outputtext},
-    numbers=none,
-    frame=single,
-    framerule=0.4pt,
-    rulecolor=\color{outputborder},
-    breaklines=true,
-    breakatwhitespace=false,
-    showstringspaces=false,
-    keepspaces=true,
-    tabsize=4,
-    columns=fullflexible,
-    xleftmargin=0pt,
+    numberstyle=\scriptsize,
+    numbersep=6pt,
+    frame=tb,
+    framerule=0.3pt,
+    framesep=4pt,
+    xleftmargin=1.6em,          % room for line numbers inside the text block
     xrightmargin=0pt,
-    aboveskip=0.8em,
-    belowskip=0.8em,
+    breaklines=true,
+    breakatwhitespace=false,
+    showstringspaces=false,
+    keepspaces=true,
+    tabsize=4,
+    columns=fullflexible,
+    emptylines=1,
+    aboveskip=8pt,
+    belowskip=8pt,
     captionpos=b
 }
-
+\lstdefinestyle{outputstyle}{
+    style=matlabstyle,
+    language={},
+    numbers=none,
+    frame=none,
+    xleftmargin=3pt,
+    aboveskip=6pt,
+    belowskip=6pt
+}
 \lstset{style=matlabstyle}
-% ============================================
-% DOCUMENT BEGIN
-% ============================================
+
+% ---------- Links ----------
+\usepackage[hidelinks,bookmarks=true,
+    pdfauthor={Hugh Fitzpatrick},
+    pdftitle={EEEN40010 Assignment 1}]{hyperref}
+\urlstyle{same}
+\hypersetup{pageanchor=false}
+
+% ---------- Float placement and paragraph penalties ----------
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpsep}{12pt plus 2pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\makeatother
+\setlength{\emergencystretch}{1em}
+\setlength{\intextsep}{14pt plus 2pt minus 2pt}
+\setlength{\textfloatsep}{16pt plus 2pt minus 2pt}
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\raggedbottom
+
+% ---------- Consistent notation and text macros ----------
+\newcommand{\Gp}{G_{\mathrm{p}}}
+\newcommand{\Gc}{G_{\mathrm{c}}}
+\newcommand{\Gcl}{G_{\mathrm{cl}}}
+\newcommand{\matlab}{MATLAB}
+\newcommand{\code}[1]{\texttt{#1}}
 \begin{document}
 
 % ============================================
@@ -214,31 +122,37 @@
 % ============================================
 \begin{titlepage}
     \centering
-    \vspace*{1.5cm}
+    \thispagestyle{empty}
+    \vspace*{12mm}
 
     % UCD Crest
-    \includegraphics[height=7.5cm]{images/UCD_Crest.png}\\[1.2cm]
+    \includegraphics[height=5cm]{images/UCD_Crest.png}\\[10mm]
 
     % Institution and course info
-    {\Large\textsc{University College Dublin}}\\[0.3cm]
-    {\large\textsc{School of Electrical \& Electronic Engineering}}\\[0.8cm]
-    {\large\textsc{EEEN40010 -- Control Theory}}\\[2cm]
+    {\large\textsc{University College Dublin}}\\[3mm]
+    {\normalsize School of Electrical \& Electronic Engineering}\\[8mm]
+    {\normalsize EEEN40010 -- Control Theory}\\[18mm]
 
     % Assignment title
-    {\Huge\bfseries Assignment 1}\\[0.4cm]
-    {\Large Control Design Method of Dominant Pole Placement
-      via Root Locus}\\[2cm]
+    {\fontsize{24}{29}\selectfont\bfseries Assignment 1}\par
+    \vspace{7mm}
+    \begin{minipage}{0.94\textwidth}
+        \centering
+        {\fontsize{18}{23}\selectfont Control Design Method of Dominant Pole Placement
+          via Root Locus\par}
+    \end{minipage}\par
+    \vfill
 
     % Author info
-    {\Large\textbf{Hugh Fitzpatrick}}\\[0.2cm]
-    {\large Student Number: 22341351}\\[0.2cm]
-
-    \vfill
+    {\large Hugh Fitzpatrick}\\[3mm]
+    {\normalsize Student Number: 22341351}\par
+    \vspace*{15mm}
 \end{titlepage}
+\thispagestyle{empty}
+\vspace*{15mm}
 \section*{Declaration of Authorship}
-\thispagestyle{declaration}
 \vspace{0.3cm}
-{\small
+{\normalsize
 I declare that all material in this report is my own work. Any contributions, ideas, or text from other sources have been clearly acknowledged. I confirm that no unacknowledged sources or unauthorised assistance were used in completing this report.
 }
 
@@ -254,7 +168,7 @@ I declare that all material in this report is my own work. Any contributions, id
 % FRONT MATTER
 % ============================================
 \setcounter{page}{1}
-\thispagestyle{fancy}
+\hypersetup{pageanchor=true}
 
 % Optional: Table of Contents
 % \tableofcontents
@@ -302,6 +216,7 @@ Similarly, the poles of the transfer function can be found by finding the roots 
 &p_1, p_2 \approx-1.31 \pm j1.32
 \end{align*}
 These poles and zeros can be confirmed numerically using MATLAB:
+\par\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[style=outputstyle]
 zeroes =
 
@@ -314,6 +229,7 @@ poles =
      -1.3125 - 1.3154i
 
 \end{lstlisting}
+\end{minipage}\par
 The one real, negative zero is therefore determined to be to the left of the complex conjugate pair of poles in the complex plane, as it's real component is more negative. 
 
 This can also be confirmed visually in Matlab:
@@ -386,7 +302,7 @@ The root loci of the closed loop system with a P controller are found to have tw
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.75\linewidth]{images/prob1_pcontrol_rootlocus.png}
+    \includegraphics[width=0.8\linewidth,height=0.35\textheight,keepaspectratio]{images/prob1_pcontrol_rootlocus.png}
     \caption{Root Loci of Control Design with P-Controller}
     \label{fig:prob1_pcontrol_rootlocus}
 \end{figure}
@@ -414,19 +330,19 @@ The zero of the controller should be placed sufficiently negative, such that the
 The PD controller design can be approximated by sketching some topologies with $z=2.5$ and varying $p$:
 \begin{figure}[H]
     \centering
-    \includegraphics[height=0.45\textheight]{images/prob1_pdcontrol_p8.png}
+    \includegraphics[width=0.85\linewidth,height=0.32\textheight,keepaspectratio]{images/prob1_pdcontrol_p8.png}
     \caption{Root Locus for Controller Pole at $p=8$, two loci approaching $\sigma = -3.39$}
     \label{fig:prob1_pdcontrol_p8}
 \end{figure}
 \begin{figure}[H]
     \centering
-    \includegraphics[height=0.45\textheight]{images/prob1_pdcontrol_p10.png}
+    \includegraphics[width=0.85\linewidth,height=0.32\textheight,keepaspectratio]{images/prob1_pdcontrol_p10.png}
     \caption{Root Locus for Controller Pole at $p=10$, two loci approaching $\sigma = -4.39$}
     \label{fig:prob1_pdcontrol_p10}
 \end{figure}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.45\textheight]{images/prob1_pdcontrol_p15.png}
+    \includegraphics[width=0.85\linewidth,height=0.32\textheight,keepaspectratio]{images/prob1_pdcontrol_p15.png}
     \caption{Root Locus for Controller Pole at $p=13$, two loci approaching $\sigma = -5.89$}
     \label{fig:prob1_pdcontrol_p15}
 \end{figure}
@@ -479,6 +395,7 @@ The step response of the closed loop system can be visualised using the \texttt{
 \end{figure}
 
 The adherence to the specification can also be confirmed using the \texttt{stepinfo}, \texttt{isstable} and \texttt{dcgain} commands:
+\par\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[style=outputstyle]
 --- Specification checks ---
 Stable: True
@@ -486,6 +403,7 @@ DC gain: 1.0000
 Settling time: 0.8725 s
 Overshoot: 28.50 %
 \end{lstlisting}
+\end{minipage}\par
 
 These results indicate that this closed loop system has achieved the design specification in the ideal simulation environment. 
 
@@ -548,10 +466,12 @@ This demonstrates that the closed-loop system rejects the impulsive disturbance 
 To measure the robustness of the control design to plant modelling errors, a Matlab script can be used to vary the $a_{11}$ and $a_{21}$ parameters, introducing an error of up to 10\% on both coefficients. This script sweeps across 21 equally spaced errors between $\pm10\%$ for both coefficients, totalling 441 total simulations of step response (see Listing~\ref{lst:prob1_err}). 
 
 The two specifications of concern for an incorrectly modelled plant are~\ref{spec:settling} and~\ref{spec:overshoot}. Across all 441 simulations, the system stays within the bounds of settling time and overshoot defined by the specifications:
+\par\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[style=outputstyle]
     Settling time:  0.860 to 1.411 s
     Overshoot:      28.27 to 28.75 % 
 \end{lstlisting}
+\end{minipage}\par
 The system can be estimated as robust to errors up to $\pm10\%$ in the estimation of the two analysed coefficients.
 
 
@@ -560,6 +480,7 @@ A similar analysis can be performed for the robustness of the stability of this 
 
 Stability is observed across all 441 simulated parameter combinations. The closed-loop pole with the largest real component, corresponding to the configuration closest to instability, occurred when \(a_{11}\) was 10\% below its nominal value and \(a_{21}\) was 10\% above its nominal value. The rightmost closed-loop pole had a real component of \(-1.0955\), remaining strictly within the left half of the complex plane. These results provide strong numerical evidence that the designed controller is robustly stable under the specified \(\pm 10\%\) parameter uncertainties.
 
+\clearpage
 \section{Problem 2}
 Upon substitution of the personalised digits, the following ODE describing a SISO plant can be defined: 
 \begin{equation}
@@ -669,6 +590,7 @@ This can be re-arranged to give a transfer function in the s-domain for the line
 
 The stability of this linearised model can be evaluated by finding the poles of the transfer function via Matlab:
 
+\par\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[style=outputstyle]
 >> Gp = tf([1], [1 -1.52 1.5]);
 >> pole(Gp)
@@ -676,6 +598,7 @@ The stability of this linearised model can be evaluated by finding the poles of 
         0.7600 + 0.9604i
         0.7600 - 0.9604i
 \end{lstlisting}
+\end{minipage}\par
 As these poles have positive real components, they will create an oscillatory component in the response of this linearised system that grows unbounded over time. As such, the system can be said to be unstable. 
 
 \subsection{Controller Design Specification}
@@ -786,6 +709,7 @@ These concerns are verified using Matlab, and \texttt{rlocfind}:
     \label{fig:prob2_pid_1.5_2.5}
 \end{figure}
 
+\par\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[style=outputstyle]
    Selected gain K = 336.6849
 
@@ -802,6 +726,7 @@ These concerns are verified using Matlab, and \texttt{rlocfind}:
     Settling time:       1.8869 s (limit 2.04 s)
     Overshoot:           82.64 % (limit 80 %)
 \end{lstlisting}
+\end{minipage}\par
 As expected, a dominant pair of poles with sufficiently negative real components can be realised, and the timing constraint~\ref{spec:settling2} is resultingly met. These dominant poles do not have a sufficiently high damping ratio, and the overshoot constraint~\ref{spec:overshoot2} is not reached. 
 
 
@@ -818,14 +743,14 @@ This topology appears promising for achieving the specification, as a dominant p
 This can be tested using \textit{rlocfind}:
 \begin{figure}[H]
     \centering
-    \begin{subfigure}[t]{0.7\textwidth}
+    \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[width=\linewidth]{images/prob2_rlocfind_0.5_1.png}
         \caption{Root locus and selected closed-loop poles}
         \label{fig:prob2_rlocfind_0.5_1}
     \end{subfigure}
     \hfill
-    \begin{subfigure}[t]{0.7\textwidth}
+    \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[width=\linewidth]{images/prob2_stepresponse_0.5_1.png}
         \caption{Closed-loop step response}
@@ -834,6 +759,7 @@ This can be tested using \textit{rlocfind}:
     \caption{PID-controlled system with $z_1=0.5$, $z_2=1.0$ and $p=10$.}
     \label{fig:prob2_pid_0.5_1}
 \end{figure}
+\par\noindent\begin{minipage}{\linewidth}
 \begin{lstlisting}[style=outputstyle]
     Selected gain K = 478.4097
     ========== CLOSED-LOOP POLES ==========
@@ -850,12 +776,20 @@ This can be tested using \textit{rlocfind}:
     Settling time:       1.2443 s (limit 2.04 s)
     Overshoot:           65.43 % (limit 80 %)
 \end{lstlisting}
+\end{minipage}\par
 Using \texttt{rlocfind}, the values of $z_1 = 0.5, z_2 = 1$ with a gain value of $K \approx 478.41$ have yielded a controller meeting the design specifications. The transfer function of this controller is given by:
 \begin{equation}
-    G_{cl}(S) = 478.41 \times \frac{(s+0.5)(s+1)}{s(s+10)} = \underbrace{69.37}+\frac{\underbrace{23.92}}{s} +\frac{\underbrace{40.9s}}{0.1s+1}
+    G_{c}(S) = 478.41 \times \frac{(s+0.5)(s+1)}{s(s+10)} = \underbrace{69.37}_{K_p}+\underbrace{23.92}\frac{1}{s} +\underbrace{40.9s}_{K_d}\frac{1}{\underbrace{0.1}_{T_D}s+1}
     \label{eq:prob2_controller}
 \end{equation}
 \subsection{Fail-Safe Analysis}
+To analyse the failsafe behaviour of this closed loop system, the different failure modes of the controller must first be considered. The failure modes considered in this analysis are:
+\begin{itemize}
+    \item Partial controller failure, i.e. failure of one of the individual P, I or D actions. The root locus containing the dominant pair of poles for the controller as seen in Fig~\ref{fig:prob2_rlocfind_0.5_1} are seen to cross the real axis and enter the right half plane. This suggests that there exists some $K$ where the system will have poles with positive real components, hence the system will be unstable. To find the scenario where this instability occurs, the values of $K_p, K_i, \& K_d$ can be individually swept from 0\% to 150\% of their nominal values in~\eqref{eq:prob2_controller}, and the overall system stability measured. This can be completed with Matlab, and the critical failure is noted as $K_d \le 3.35$. This will result in an unstable closed loop system as modelled by the linearised plant in~\ref{eq:prob2_linear}, however the behaviour of the non-linear plant may not be that of unbounded oscillation.
+    \item Catastrophic controller failure i.e. $f(t)= 0$. In this event, the output of the controller $f(t)$ instantaneously falls to 0. In this case, the expected behaviour of the system is to decay to a stable oscillation, as observed in the initial analysis of this problem. While this is bounded, it represents a non-zero steady state error, and as such will likely imply a non-failsafe system. 
+\end{itemize}
+Each of these failure modes can be modelled, and the resulting plant behaviour measured. 
+
 \newpage
 \begin{thebibliography}{1}
     \bibitem{mathworks:ode45}
